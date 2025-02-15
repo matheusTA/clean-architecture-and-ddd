@@ -5,12 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "biome:check": "biome check ./src --fix --unsafe",
+    "biome:format": "biome format ./src --write"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/node": "^22.13.2",
     "typescript": "^5.7.3",
     "vite-tsconfig-paths": "^5.1.4",

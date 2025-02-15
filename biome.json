@@ -1,0 +1,73 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": [
+      "node_modules/**",
+      "build/**",
+      "coverage/**",
+      "tsconfig.json",
+      "biome.json"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "ignore": [
+      "node_modules/**",
+      "build/**",
+      "coverage/**",
+      "tsconfig.json",
+      "biome.json"
+    ],
+    "attributePosition": "auto",
+    "indentStyle": "tab",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 80,
+    "useEditorconfig": true
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noInvalidUseBeforeDeclaration": "error",
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
+      },
+      "suspicious": {
+        "noConsoleLog": "error"
+      }
+    },
+    "ignore": [
+      "node_modules/**",
+      "build/**",
+      "coverage/**",
+      "tsconfig.json",
+      "biome.json"
+    ]
+  },
+  "javascript": {
+    "globals": [
+      "_"
+    ],
+    "formatter": {
+      "quoteStyle": "single",
+      "enabled": true
+    }
+  },
+  "json": {
+    "formatter": {
+      "trailingCommas": "none"
+    }
+  }
+}

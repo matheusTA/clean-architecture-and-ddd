@@ -1,19 +1,19 @@
-import { Entity } from "@/core/entities/entity";
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { Entity } from '@/core/entities/entity';
+import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 
 interface InstructorProps {
-  name: string;
+	name: string;
 }
 
 export class Instructor extends Entity<InstructorProps> {
-  static build(props: InstructorProps, id?: UniqueEntityID) {
-    const instructor = new Instructor(
-      {
-        ...props,
-      },
-      id
-    );
+	static build(props: InstructorProps, id?: UniqueEntityID) {
+		const instructor = new Instructor(
+			{
+				...props,
+			},
+			id,
+		);
 
-    return instructor;
-  }
+		return instructor;
+	}
 }

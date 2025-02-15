@@ -1,89 +1,89 @@
-import { Slug } from "./value-objects/slug.value-object";
-import { Entity } from "@/core/entities/entity";
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import { Optional } from "@/core/types/optional";
-import dayjs from "dayjs";
+import { Entity } from '@/core/entities/entity';
+import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import type { Optional } from '@/core/types/optional';
+import dayjs from 'dayjs';
+import { Slug } from './value-objects/slug.value-object';
 
 interface QuestionProps {
-  createdAt: Date;
-  updatedAt?: Date;
-  authorId: UniqueEntityID;
-  title: string;
-  content: string;
-  slug: Slug;
-  bestAnswerId?: UniqueEntityID;
+	createdAt: Date;
+	updatedAt?: Date;
+	authorId: UniqueEntityID;
+	title: string;
+	content: string;
+	slug: Slug;
+	bestAnswerId?: UniqueEntityID;
 }
 
 export class Question extends Entity<QuestionProps> {
-  static build(
-    props: Optional<QuestionProps, "createdAt" | "slug">,
-    id?: UniqueEntityID
-  ) {
-    const question = new Question(
-      {
-        ...props,
-        createdAt: new Date(),
-        slug: props.slug ?? Slug.createFromText(props.title),
-      },
-      id
-    );
+	static build(
+		props: Optional<QuestionProps, 'createdAt' | 'slug'>,
+		id?: UniqueEntityID,
+	) {
+		const question = new Question(
+			{
+				...props,
+				createdAt: new Date(),
+				slug: props.slug ?? Slug.createFromText(props.title),
+			},
+			id,
+		);
 
-    return question;
-  }
+		return question;
+	}
 
-  private touch() {
-    this.props.updatedAt = new Date();
-  }
+	private touch() {
+		this.props.updatedAt = new Date();
+	}
 
-  get createdAt() {
-    return this.props.createdAt;
-  }
+	get createdAt() {
+		return this.props.createdAt;
+	}
 
-  get updatedAt() {
-    return this.props.updatedAt;
-  }
+	get updatedAt() {
+		return this.props.updatedAt;
+	}
 
-  get authorId() {
-    return this.props.authorId;
-  }
+	get authorId() {
+		return this.props.authorId;
+	}
 
-  get title() {
-    return this.props.title;
-  }
+	get title() {
+		return this.props.title;
+	}
 
-  get content() {
-    return this.props.content;
-  }
+	get content() {
+		return this.props.content;
+	}
 
-  get slug() {
-    return this.props.slug;
-  }
+	get slug() {
+		return this.props.slug;
+	}
 
-  get bestAnswerId() {
-    return this.props.bestAnswerId;
-  }
+	get bestAnswerId() {
+		return this.props.bestAnswerId;
+	}
 
-  get isNew() {
-    return dayjs().diff(this.props.createdAt, "days") <= 3;
-  }
+	get isNew() {
+		return dayjs().diff(this.props.createdAt, 'days') <= 3;
+	}
 
-  get excerpt() {
-    return this.props.content.substring(0, 120).trimEnd().concat("...");
-  }
+	get excerpt() {
+		return this.props.content.substring(0, 120).trimEnd().concat('...');
+	}
 
-  set title(value: string) {
-    this.props.title = value;
-    this.props.slug = Slug.createFromText(value);
-    this.touch();
-  }
+	set title(value: string) {
+		this.props.title = value;
+		this.props.slug = Slug.createFromText(value);
+		this.touch();
+	}
 
-  set content(value: string) {
-    this.props.content = value;
-    this.touch();
-  }
+	set content(value: string) {
+		this.props.content = value;
+		this.touch();
+	}
 
-  set bestAnswerId(value: UniqueEntityID | undefined) {
-    this.props.bestAnswerId = value;
-    this.touch();
-  }
+	set bestAnswerId(value: UniqueEntityID | undefined) {
+		this.props.bestAnswerId = value;
+		this.touch();
+	}
 }
