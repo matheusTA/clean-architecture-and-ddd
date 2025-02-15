@@ -1,19 +1,23 @@
-import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
-import { expect, test, vi } from 'vitest';
+import { InMemoryAnswerRepository } from '@/test/in-memory-answer-repository';
+import { expect } from 'vitest';
 import { AnswerQuestionUseCase } from '../answer-question.use-case';
 
-const fakeAnswerRepository: AnswerRepository = {
-	create: vi.fn(),
-};
+let repository: InMemoryAnswerRepository;
+let useCase: AnswerQuestionUseCase;
 
-test('should create an answer', async () => {
-	const answerQuestion = new AnswerQuestionUseCase(fakeAnswerRepository);
-
-	const answer = await answerQuestion.execute({
-		authorId: 'author-id',
-		questionId: 'question-id',
-		answerContent: 'answer content',
+describe('answer question use case', () => {
+	beforeEach(() => {
+		repository = new InMemoryAnswerRepository();
+		useCase = new AnswerQuestionUseCase(repository);
 	});
 
-	expect(answer.content).toBe('answer content');
+	it('should create an answer', async () => {
+		const { answer } = await useCase.execute({
+			authorId: 'author-id',
+			questionId: 'question-id',
+			answerContent: 'answer content',
+		});
+
+		expect(answer.content).toBe('answer content');
+	});
 });
