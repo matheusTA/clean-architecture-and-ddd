@@ -1,4 +1,4 @@
-import type { AnswerRepository } from '@/domain/repositories/answer.repository';
+import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
 import { expect, test, vi } from 'vitest';
 import { AnswerQuestionUseCase } from '../answer-question.use-case';
 
