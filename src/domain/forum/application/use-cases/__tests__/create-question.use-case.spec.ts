@@ -1,5 +1,5 @@
 import { CreateQuestionUseCase } from '@/domain/forum/application/use-cases/create-question.use-case';
-import { InMemoryQuestionRepository } from '@/test/in-memory-question-repository';
+import { InMemoryQuestionRepository } from '@/test/repositories/in-memory-question-repository';
 import { expect } from 'vitest';
 
 let repository: InMemoryQuestionRepository;

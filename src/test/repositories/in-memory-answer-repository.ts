@@ -2,7 +2,7 @@ import type { AnswerRepository } from '@/domain/forum/application/repositories/a
 import type { Answer } from '@/domain/forum/enterprise/entities/answer.entity';
 
 export class InMemoryAnswerRepository implements AnswerRepository {
-	private answers: Answer[] = [];
+	public answers: Answer[] = [];
 
 	async create(answer: Answer): Promise<void> {
 		this.answers.push(answer);

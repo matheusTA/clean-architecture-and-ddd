@@ -10,6 +10,6 @@ export class Entity<PropsType> {
 	}
 
 	get id() {
-		return this._id.value;
+		return this._id;
 	}
 }
