@@ -1,10 +1,15 @@
 import type { QuestionRepository } from '@/domain/forum/application/repositories/question.repository';
+import type { Question } from '@/domain/forum/enterprise/entities/question.entity';
 
 interface EditQuestionUseCaseInput {
 	authorId: string;
 	questionId: string;
 	title: string;
 	content: string;
+}
+
+interface EditQuestionUseCaseOutput {
+	question: Question;
 }
 
 export class EditQuestionUseCase {
@@ -15,7 +20,7 @@ export class EditQuestionUseCase {
 		questionId,
 		title,
 		content,
-	}: EditQuestionUseCaseInput): Promise<void> {
+	}: EditQuestionUseCaseInput): Promise<EditQuestionUseCaseOutput> {
 		const question = await this.questionRepository.getById(questionId);
 
 		if (!question) {
@@ -30,5 +35,9 @@ export class EditQuestionUseCase {
 		question.content = content;
 
 		await this.questionRepository.save(question);
+
+		return {
+			question,
+		};
 	}
 }
