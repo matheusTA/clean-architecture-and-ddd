@@ -21,7 +21,7 @@ export class EditQuestionUseCase {
 		title,
 		content,
 	}: EditQuestionUseCaseInput): Promise<EditQuestionUseCaseOutput> {
-		const question = await this.questionRepository.getById(questionId);
+		const question = await this.questionRepository.findById(questionId);
 
 		if (!question) {
 			throw new Error('Question not found');

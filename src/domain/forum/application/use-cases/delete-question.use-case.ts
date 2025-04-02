@@ -12,7 +12,7 @@ export class DeleteQuestionUseCase {
 		authorId,
 		questionId,
 	}: DeleteQuestionUseCaseInput): Promise<void> {
-		const question = await this.questionRepository.getById(questionId);
+		const question = await this.questionRepository.findById(questionId);
 
 		if (!question) {
 			throw new Error('Question not found');

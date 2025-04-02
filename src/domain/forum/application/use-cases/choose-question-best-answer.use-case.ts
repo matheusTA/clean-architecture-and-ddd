@@ -21,13 +21,13 @@ export class ChooseQuestionBestAnswerUseCase {
 		authorId,
 		answerId,
 	}: ChooseQuestionBestAnswerUseCaseInput): Promise<ChooseQuestionBestAnswerUseCaseOutput> {
-		const answer = await this.answerRepository.getById(answerId);
+		const answer = await this.answerRepository.findById(answerId);
 
 		if (!answer) {
 			throw new Error('Answer not found');
 		}
 
-		const question = await this.questionRepository.getById(
+		const question = await this.questionRepository.findById(
 			answer.questionId.toString(),
 		);
 

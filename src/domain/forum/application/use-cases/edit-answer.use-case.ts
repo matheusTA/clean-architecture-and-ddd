@@ -19,7 +19,7 @@ export class EditAnswerUseCase {
 		answerId,
 		content,
 	}: EditAnswerUseCaseInput): Promise<EditAnswerUseCaseOutput> {
-		const answer = await this.answerRepository.getById(answerId);
+		const answer = await this.answerRepository.findById(answerId);
 
 		if (!answer) {
 			throw new Error('Answer not found');

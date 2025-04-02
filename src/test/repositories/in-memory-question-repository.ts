@@ -1,10 +1,11 @@
+import type { PaginationParams } from '@/core/types/pagination-params';
 import type { QuestionRepository } from '@/domain/forum/application/repositories/question.repository';
 import type { Question } from '@/domain/forum/enterprise/entities/question.entity';
 
 export class InMemoryQuestionRepository implements QuestionRepository {
 	public questions: Question[] = [];
 
-	async getById(id: string): Promise<Question | null> {
+	async findById(id: string): Promise<Question | null> {
 		const question = this.questions.find(
 			(question) => question.id.toString() === id,
 		);
@@ -16,7 +17,7 @@ export class InMemoryQuestionRepository implements QuestionRepository {
 		return question;
 	}
 
-	async getBySlug(slug: string): Promise<Question | null> {
+	async findBySlug(slug: string): Promise<Question | null> {
 		const question = this.questions.find(
 			(question) => question.slug.value === slug,
 		);
@@ -26,6 +27,14 @@ export class InMemoryQuestionRepository implements QuestionRepository {
 		}
 
 		return question;
+	}
+
+	async findManyRecent({ page }: PaginationParams): Promise<Question[]> {
+		const questions = this.questions
+			.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+			.slice((page - 1) * 20, page * 20);
+
+		return questions;
 	}
 
 	async save(question: Question): Promise<void> {

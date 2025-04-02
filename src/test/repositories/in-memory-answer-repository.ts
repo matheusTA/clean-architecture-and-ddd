@@ -4,7 +4,7 @@ import type { Answer } from '@/domain/forum/enterprise/entities/answer.entity';
 export class InMemoryAnswerRepository implements AnswerRepository {
 	public answers: Answer[] = [];
 
-	async getById(id: string): Promise<Answer | null> {
+	async findById(id: string): Promise<Answer | null> {
 		const answer = this.answers.find((answer) => answer.id.toString() === id);
 
 		if (!answer) {
