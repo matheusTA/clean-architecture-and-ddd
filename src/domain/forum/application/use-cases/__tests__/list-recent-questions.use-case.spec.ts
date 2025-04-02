@@ -1,14 +1,14 @@
-import { ListRecentQuestionsCase } from '@/domain/forum/application/use-cases/list-recent-questions.use-case';
+import { ListRecentQuestionsUseCase } from '@/domain/forum/application/use-cases/list-recent-questions.use-case';
 import { makeQuestion } from '@/test/factories/make-question';
 import { InMemoryQuestionRepository } from '@/test/repositories/in-memory-question-repository';
 
 let repository: InMemoryQuestionRepository;
-let useCase: ListRecentQuestionsCase;
+let useCase: ListRecentQuestionsUseCase;
 
 describe('list recent questions use case', () => {
 	beforeEach(() => {
 		repository = new InMemoryQuestionRepository();
-		useCase = new ListRecentQuestionsCase(repository);
+		useCase = new ListRecentQuestionsUseCase(repository);
 	});
 
 	it('should be able to list recent questions', async () => {

@@ -1,20 +1,20 @@
 import type { QuestionRepository } from '@/domain/forum/application/repositories/question.repository';
 import type { Question } from '@/domain/forum/enterprise/entities/question.entity';
 
-interface ListRecentQuestionsCaseInput {
+interface ListRecentQuestionsUseCaseInput {
 	page: number;
 }
 
-interface ListRecentQuestionsCaseOutput {
+interface ListRecentQuestionsUseCaseOutput {
 	questions: Question[];
 }
 
-export class ListRecentQuestionsCase {
+export class ListRecentQuestionsUseCase {
 	constructor(private questionRepository: QuestionRepository) {}
 
 	async execute({
 		page,
-	}: ListRecentQuestionsCaseInput): Promise<ListRecentQuestionsCaseOutput> {
+	}: ListRecentQuestionsUseCaseInput): Promise<ListRecentQuestionsUseCaseOutput> {
 		const questions = await this.questionRepository.findManyRecent({ page });
 
 		return {
