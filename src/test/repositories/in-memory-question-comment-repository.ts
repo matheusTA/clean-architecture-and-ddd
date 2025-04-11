@@ -1,3 +1,4 @@
+import type { PaginationParams } from '@/core/types/pagination-params';
 import type { QuestionCommentRepository } from '@/domain/forum/application/repositories/question-comment.repository';
 import type { QuestionComment } from '@/domain/forum/enterprise/entities/question-comment.entity';
 
@@ -16,6 +17,21 @@ export class InMemoryQuestionCommentRepository
 		}
 
 		return questionComment;
+	}
+
+	async findManyByQuestionId(
+		questionId: string,
+		params: PaginationParams,
+	): Promise<QuestionComment[]> {
+		const questionComments = this.questionComments
+			.filter(
+				(questionComment) =>
+					questionComment.questionId.toString() === questionId,
+			)
+			.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+			.slice((params.page - 1) * 20, params.page * 20);
+
+		return questionComments;
 	}
 
 	async create(questionComment: QuestionComment): Promise<void> {
