@@ -4,18 +4,22 @@ import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not
 import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import type { AnswerComment } from '@/domain/forum/enterprise/entities/answer-comment.entity';
 
-interface DeleteAnswerCommentUseCaseInput {
+type DeleteAnswerCommentUseCaseInput = {
 	answerCommentId: string;
 	authorId: string;
-}
+};
 
-interface DeleteAnswerCommentUseCaseOutput {
+type DeleteAnswerCommentUseCaseOutputSuccess = {
 	answerComment: AnswerComment;
-}
+};
 
-type DeleteAnswerCommentUseCaseResponse = Either<
-	ResourceNotFoundError | NotAllowedError,
-	DeleteAnswerCommentUseCaseOutput
+type DeleteAnswerCommentUseCaseoutputError =
+	| ResourceNotFoundError
+	| NotAllowedError;
+
+type DeleteAnswerCommentUseCaseOutput = Either<
+	DeleteAnswerCommentUseCaseoutputError,
+	DeleteAnswerCommentUseCaseOutputSuccess
 >;
 
 export class DeleteAnswerCommentUseCase {
@@ -24,7 +28,7 @@ export class DeleteAnswerCommentUseCase {
 	async execute({
 		answerCommentId,
 		authorId,
-	}: DeleteAnswerCommentUseCaseInput): Promise<DeleteAnswerCommentUseCaseResponse> {
+	}: DeleteAnswerCommentUseCaseInput): Promise<DeleteAnswerCommentUseCaseOutput> {
 		const answerComment =
 			await this.answerCommentRepository.findById(answerCommentId);
 
