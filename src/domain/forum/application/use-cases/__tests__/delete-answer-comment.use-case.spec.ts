@@ -1,4 +1,6 @@
 import { DeleteAnswerCommentUseCase } from '@/domain/forum/application/use-cases/delete-answer-comment.use-case';
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeAnswerComment } from '@/test/factories/make-answer-comment';
 import { InMemoryAnswerCommentRepository } from '@/test/repositories/in-memory-answer-comment-repository';
 import { expect } from 'vitest';
@@ -25,23 +27,25 @@ describe('delete answer comment use case', () => {
 	});
 
 	it('should not be able to delete a non-existent answer comment', async () => {
-		await expect(() =>
-			useCase.execute({
-				answerCommentId: 'non-existent-comment',
-				authorId: 'author-1',
-			}),
-		).rejects.toThrow('Answer comment not found.');
+		const result = await useCase.execute({
+			answerCommentId: 'non-existent-comment',
+			authorId: 'author-1',
+		});
+
+		expect(result.isLeft()).toBeTruthy();
+		expect(result.value).toBeInstanceOf(ResourceNotFoundError);
 	});
 
 	it('should not be able to delete an answer comment from another author', async () => {
 		const answerComment = makeAnswerComment();
 		await answerCommentRepository.create(answerComment);
 
-		await expect(() =>
-			useCase.execute({
-				answerCommentId: answerComment.id.toString(),
-				authorId: 'wrong-author-id',
-			}),
-		).rejects.toThrow('Not allowed.');
+		const result = await useCase.execute({
+			answerCommentId: answerComment.id.toString(),
+			authorId: 'wrong-author-id',
+		});
+
+		expect(result.isLeft()).toBeTruthy();
+		expect(result.value).toBeInstanceOf(NotAllowedError);
 	});
 });
