@@ -1,17 +1,26 @@
+import { type Either, left, right } from '@/core/either';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { AnswerCommentRepository } from '@/domain/forum/application/repositories/answer-comment.repository';
 import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { AnswerComment } from '@/domain/forum/enterprise/entities/answer-comment.entity';
 
-interface CommentOnAnswerUseCaseInput {
+type CommentOnAnswerUseCaseInput = {
 	answerId: string;
 	authorId: string;
 	content: string;
-}
+};
 
-interface CommentOnAnswerUseCaseOutput {
+type CommentOnAnswerUseCaseOutputSuccess = {
 	answerComment: AnswerComment;
-}
+};
+
+type CommentOnAnswerUseCaseoutputError = ResourceNotFoundError;
+
+type CommentOnAnswerUseCaseOutput = Either<
+	CommentOnAnswerUseCaseoutputError,
+	CommentOnAnswerUseCaseOutputSuccess
+>;
 
 export class CommentOnAnswerUseCase {
 	constructor(
@@ -27,7 +36,7 @@ export class CommentOnAnswerUseCase {
 		const answer = await this.answerRepository.findById(answerId);
 
 		if (!answer) {
-			throw new Error('Answer not found.');
+			return left(new ResourceNotFoundError());
 		}
 
 		const answerComment = AnswerComment.build({
@@ -38,8 +47,8 @@ export class CommentOnAnswerUseCase {
 
 		await this.answerCommentRepository.create(answerComment);
 
-		return {
+		return right({
 			answerComment,
-		};
+		});
 	}
 }

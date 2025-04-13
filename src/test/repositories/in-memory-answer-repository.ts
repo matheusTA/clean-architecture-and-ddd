@@ -20,6 +20,7 @@ export class InMemoryAnswerRepository implements AnswerRepository {
 	): Promise<Answer[]> {
 		const answers = this.answers
 			.filter((answer) => answer.questionId.toString() === questionId)
+			.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
 			.slice((page - 1) * 20, page * 20);
 
 		return answers;

@@ -1,4 +1,5 @@
 import { CommentOnQuestionUseCase } from '@/domain/forum/application/use-cases/comment-on-question.use-case';
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeQuestion } from '@/test/factories/make-question';
 import { InMemoryQuestionCommentRepository } from '@/test/repositories/in-memory-question-comment-repository';
 import { InMemoryQuestionRepository } from '@/test/repositories/in-memory-question-repository';
@@ -22,24 +23,26 @@ describe('comment on question use case', () => {
 		const question = makeQuestion();
 		await questionRepository.create(question);
 
-		await useCase.execute({
+		const result = await useCase.execute({
 			questionId: question.id.toString(),
 			authorId: 'author-1',
 			content: 'Test comment',
 		});
 
+		expect(result.isRight()).toBeTruthy();
 		expect(questionCommentRepository.questionComments[0].content).toBe(
 			'Test comment',
 		);
 	});
 
 	it('should not be able to comment on a non-existent question', async () => {
-		await expect(() =>
-			useCase.execute({
-				questionId: 'non-existent-question',
-				authorId: 'author-1',
-				content: 'Test comment',
-			}),
-		).rejects.toThrow('Question not found.');
+		const result = await useCase.execute({
+			questionId: 'non-existent-question',
+			authorId: 'author-1',
+			content: 'Test comment',
+		});
+
+		expect(result.isLeft()).toBeTruthy();
+		expect(result.value).toBeInstanceOf(ResourceNotFoundError);
 	});
 });

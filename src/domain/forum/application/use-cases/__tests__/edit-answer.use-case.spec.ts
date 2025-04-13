@@ -1,5 +1,7 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { EditAnswerUseCase } from '@/domain/forum/application/use-cases/edit-answer.use-case';
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeAnswer } from '@/test/factories/make-answer';
 import { InMemoryAnswerRepository } from '@/test/repositories/in-memory-answer-repository';
 import { expect } from 'vitest';
@@ -25,25 +27,27 @@ describe('edit answer use case', () => {
 
 		await repository.create(createdAnswer);
 
-		await useCase.execute({
+		const { isRight } = await useCase.execute({
 			authorId: createdAnswerAuthorId.toString(),
 			answerId: createdAnswerId.toString(),
 			content: 'new content',
 		});
 
+		expect(isRight()).toBe(true);
 		expect(repository.answers[0]).toMatchObject({
 			content: 'new content',
 		});
 	});
 
 	it('should throw an error if answer is not found', async () => {
-		await expect(
-			useCase.execute({
-				authorId: 'author-id',
-				answerId: 'answer-id',
-				content: 'content',
-			}),
-		).rejects.toThrow('Answer not found');
+		const { isLeft, value } = await useCase.execute({
+			authorId: 'author-id',
+			answerId: 'answer-id',
+			content: 'content',
+		});
+
+		expect(isLeft()).toBe(true);
+		expect(value).toBeInstanceOf(ResourceNotFoundError);
 	});
 
 	it('should throw an error if author is not the same as the answer author', async () => {
@@ -58,12 +62,13 @@ describe('edit answer use case', () => {
 
 		await repository.create(createdAnswer);
 
-		await expect(
-			useCase.execute({
-				authorId: 'another-author-id',
-				answerId: createdAnswerId.toString(),
-				content: 'content',
-			}),
-		).rejects.toThrow('Unauthorized');
+		const { isLeft, value } = await useCase.execute({
+			authorId: 'another-author-id',
+			answerId: createdAnswerId.toString(),
+			content: 'content',
+		});
+
+		expect(isLeft()).toBe(true);
+		expect(value).toBeInstanceOf(NotAllowedError);
 	});
 });

@@ -12,12 +12,13 @@ describe('create question use case', () => {
 	});
 
 	it('should create a question', async () => {
-		const { question } = await useCase.execute({
+		const { value, isRight } = await useCase.execute({
 			authorId: 'author-id',
 			title: 'question title',
 			content: 'answer content',
 		});
 
-		expect(question.id).toBeTruthy();
+		expect(isRight()).toBe(true);
+		expect(value?.question.id).toBeTruthy();
 	});
 });

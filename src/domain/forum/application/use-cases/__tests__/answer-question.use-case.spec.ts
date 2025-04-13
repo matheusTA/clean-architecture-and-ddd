@@ -12,12 +12,13 @@ describe('answer question use case', () => {
 	});
 
 	it('should create an answer', async () => {
-		const { answer } = await useCase.execute({
+		const { value, isRight } = await useCase.execute({
 			authorId: 'author-id',
 			questionId: 'question-id',
 			answerContent: 'answer content',
 		});
 
-		expect(answer.content).toBe('answer content');
+		expect(isRight()).toBe(true);
+		expect(value?.answer.content).toBe('answer content');
 	});
 });

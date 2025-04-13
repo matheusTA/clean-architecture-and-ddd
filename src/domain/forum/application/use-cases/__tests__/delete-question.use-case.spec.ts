@@ -1,5 +1,7 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { DeleteQuestionUseCase } from '@/domain/forum/application/use-cases/delete-question.use-case';
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeQuestion } from '@/test/factories/make-question';
 import { InMemoryQuestionRepository } from '@/test/repositories/in-memory-question-repository';
 import { expect } from 'vitest';
@@ -25,18 +27,23 @@ describe('delete question use case', () => {
 
 		await repository.create(createdQuestion);
 
-		await useCase.execute({
+		const { isRight } = await useCase.execute({
 			authorId: createdQuestionAuthorId.toString(),
 			questionId: createdQuestionId.toString(),
 		});
 
+		expect(isRight()).toBe(true);
 		expect(repository.questions).toHaveLength(0);
 	});
 
 	it('should throw an error if question is not found', async () => {
-		await expect(
-			useCase.execute({ authorId: 'author-id', questionId: 'question-id' }),
-		).rejects.toThrow('Question not found');
+		const { isLeft, value } = await useCase.execute({
+			authorId: 'author-id',
+			questionId: 'question-id',
+		});
+
+		expect(isLeft()).toBe(true);
+		expect(value).toBeInstanceOf(ResourceNotFoundError);
 	});
 
 	it('should throw an error if author is not the same as the question author', async () => {
@@ -51,11 +58,12 @@ describe('delete question use case', () => {
 
 		await repository.create(createdQuestion);
 
-		await expect(
-			useCase.execute({
-				authorId: 'another-author-id',
-				questionId: createdQuestionId.toString(),
-			}),
-		).rejects.toThrow('Unauthorized');
+		const { isLeft, value } = await useCase.execute({
+			authorId: 'another-author-id',
+			questionId: createdQuestionId.toString(),
+		});
+
+		expect(isLeft()).toBe(true);
+		expect(value).toBeInstanceOf(NotAllowedError);
 	});
 });

@@ -32,12 +32,13 @@ describe('list question comments use case', () => {
 		await questionCommentRepository.create(questionComment2);
 		await questionCommentRepository.create(questionComment3);
 
-		const { questionComments } = await useCase.execute({
+		const result = await useCase.execute({
 			questionId: question.id.toString(),
 			page: 1,
 		});
 
-		expect(questionComments).toEqual([
+		expect(result.isRight()).toBeTruthy();
+		expect(result.value?.questionComments).toEqual([
 			expect.objectContaining({ createdAt: new Date(2023, 0, 18) }),
 			expect.objectContaining({ createdAt: new Date(2023, 0, 20) }),
 			expect.objectContaining({ createdAt: new Date(2023, 0, 25) }),
@@ -56,11 +57,12 @@ describe('list question comments use case', () => {
 			);
 		}
 
-		const { questionComments } = await useCase.execute({
+		const result = await useCase.execute({
 			questionId: question.id.toString(),
 			page: 2,
 		});
 
-		expect(questionComments).toHaveLength(2);
+		expect(result.isRight()).toBeTruthy();
+		expect(result.value?.questionComments).toHaveLength(2);
 	});
 });

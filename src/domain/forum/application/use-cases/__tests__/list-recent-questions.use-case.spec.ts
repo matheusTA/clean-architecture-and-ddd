@@ -16,11 +16,12 @@ describe('list recent questions use case', () => {
 		repository.create(makeQuestion({ createdAt: new Date(2023, 0, 18) }));
 		repository.create(makeQuestion({ createdAt: new Date(2023, 0, 25) }));
 
-		const { questions } = await useCase.execute({
+		const { isRight, value } = await useCase.execute({
 			page: 1,
 		});
 
-		expect(questions).toEqual([
+		expect(isRight()).toBe(true);
+		expect(value?.questions).toEqual([
 			expect.objectContaining({ createdAt: new Date(2023, 0, 25) }),
 			expect.objectContaining({ createdAt: new Date(2023, 0, 20) }),
 			expect.objectContaining({ createdAt: new Date(2023, 0, 18) }),
@@ -36,10 +37,11 @@ describe('list recent questions use case', () => {
 			);
 		}
 
-		const { questions } = await useCase.execute({
+		const { isRight, value } = await useCase.execute({
 			page: 2,
 		});
 
-		expect(questions).toHaveLength(2);
+		expect(isRight()).toBe(true);
+		expect(value?.questions).toHaveLength(2);
 	});
 });

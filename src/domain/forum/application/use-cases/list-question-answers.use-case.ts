@@ -1,14 +1,22 @@
+import { type Either, right } from '@/core/either';
 import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
 import type { Answer } from '@/domain/forum/enterprise/entities/answer.entity';
 
-interface ListQuestionAnswersUseCaseInput {
+type ListQuestionAnswersUseCaseInput = {
 	questionId: string;
 	page: number;
-}
+};
 
-interface ListQuestionAnswersUseCaseOutput {
+type ListQuestionAnswersUseCaseOutputSuccess = {
 	answers: Answer[];
-}
+};
+
+type ListQuestionAnswersUseCaseoutputError = null;
+
+type ListQuestionAnswersUseCaseOutput = Either<
+	ListQuestionAnswersUseCaseoutputError,
+	ListQuestionAnswersUseCaseOutputSuccess
+>;
 
 export class ListQuestionAnswersUseCase {
 	constructor(private answerRepository: AnswerRepository) {}
@@ -22,8 +30,8 @@ export class ListQuestionAnswersUseCase {
 			{ page },
 		);
 
-		return {
+		return right({
 			answers,
-		};
+		});
 	}
 }

@@ -1,3 +1,4 @@
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { GetQuestionBySlugUseCase } from '@/domain/forum/application/use-cases/get-question-by-slug';
 import { Slug } from '@/domain/forum/enterprise/entities/value-objects/slug.value-object';
 import { makeQuestion } from '@/test/factories/make-question';
@@ -20,16 +21,24 @@ describe('get question by slug use case', () => {
 
 		await repository.create(createdQuestion);
 
-		const { question } = await useCase.execute({
+		const { value, isRight } = await useCase.execute({
 			slug: 'question-title',
 		});
 
-		expect(createdQuestion.title).toEqual(question.title);
+		expect(isRight()).toBe(true);
+		expect(value).toMatchObject({
+			question: expect.objectContaining({
+				title: createdQuestion.title,
+			}),
+		});
 	});
 
 	it('should throw an error if question is not found', async () => {
-		await expect(useCase.execute({ slug: 'question-title' })).rejects.toThrow(
-			'Question not found',
-		);
+		const { isLeft, value } = await useCase.execute({
+			slug: 'question-title',
+		});
+
+		expect(isLeft()).toBe(true);
+		expect(value).toBeInstanceOf(ResourceNotFoundError);
 	});
 });

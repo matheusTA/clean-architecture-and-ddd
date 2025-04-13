@@ -1,16 +1,24 @@
+import { type Either, right } from '@/core/either';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
 import { Answer } from '@/domain/forum/enterprise/entities/answer.entity';
 
-interface AnswerQuestionUseCaseInput {
+type AnswerQuestionUseCaseInput = {
 	questionId: string;
 	authorId: string;
 	answerContent: string;
-}
+};
 
-interface AnswerQuestionUseCaseOutput {
+type AnswerQuestionUseCaseOutputSuccess = {
 	answer: Answer;
-}
+};
+
+type AnswerQuestionUseCaseoutputError = null;
+
+type AnswerQuestionUseCaseOutput = Either<
+	AnswerQuestionUseCaseoutputError,
+	AnswerQuestionUseCaseOutputSuccess
+>;
 
 export class AnswerQuestionUseCase {
 	constructor(private answerRepository: AnswerRepository) {}
@@ -28,6 +36,6 @@ export class AnswerQuestionUseCase {
 
 		await this.answerRepository.create(answer);
 
-		return { answer };
+		return right({ answer });
 	}
 }

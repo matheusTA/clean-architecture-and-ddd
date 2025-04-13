@@ -1,14 +1,21 @@
+import { type Either, right } from '@/core/either';
 import type { QuestionRepository } from '@/domain/forum/application/repositories/question.repository';
 import type { Question } from '@/domain/forum/enterprise/entities/question.entity';
 
-interface ListRecentQuestionsUseCaseInput {
+type ListRecentQuestionsUseCaseInput = {
 	page: number;
-}
+};
 
-interface ListRecentQuestionsUseCaseOutput {
+type ListRecentQuestionsUseCaseOutputSuccess = {
 	questions: Question[];
-}
+};
 
+type ListRecentQuestionsUseCaseOutputError = null;
+
+type ListRecentQuestionsUseCaseOutput = Either<
+	ListRecentQuestionsUseCaseOutputError,
+	ListRecentQuestionsUseCaseOutputSuccess
+>;
 export class ListRecentQuestionsUseCase {
 	constructor(private questionRepository: QuestionRepository) {}
 
@@ -17,8 +24,8 @@ export class ListRecentQuestionsUseCase {
 	}: ListRecentQuestionsUseCaseInput): Promise<ListRecentQuestionsUseCaseOutput> {
 		const questions = await this.questionRepository.findManyRecent({ page });
 
-		return {
+		return right({
 			questions,
-		};
+		});
 	}
 }

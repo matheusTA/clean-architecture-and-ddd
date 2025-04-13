@@ -1,14 +1,26 @@
+import { type Either, left, right } from '@/core/either';
 import type { QuestionCommentRepository } from '@/domain/forum/application/repositories/question-comment.repository';
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import type { QuestionComment } from '@/domain/forum/enterprise/entities/question-comment.entity';
 
-interface DeleteQuestionCommentUseCaseInput {
+type DeleteQuestionCommentUseCaseInput = {
 	questionCommentId: string;
 	authorId: string;
-}
+};
 
-interface DeleteQuestionCommentUseCaseOutput {
+type DeleteQuestionCommentUseCaseOutputSuccess = {
 	questionComment: QuestionComment;
-}
+};
+
+type DeleteQuestionCommentUseCaseoutputError =
+	| ResourceNotFoundError
+	| NotAllowedError;
+
+type DeleteQuestionCommentUseCaseOutput = Either<
+	DeleteQuestionCommentUseCaseoutputError,
+	DeleteQuestionCommentUseCaseOutputSuccess
+>;
 
 export class DeleteQuestionCommentUseCase {
 	constructor(private questionCommentRepository: QuestionCommentRepository) {}
@@ -21,17 +33,17 @@ export class DeleteQuestionCommentUseCase {
 			await this.questionCommentRepository.findById(questionCommentId);
 
 		if (!questionComment) {
-			throw new Error('Question comment not found.');
+			return left(new ResourceNotFoundError());
 		}
 
 		if (questionComment.authorId.toString() !== authorId) {
-			throw new Error('Not allowed.');
+			return left(new NotAllowedError());
 		}
 
 		await this.questionCommentRepository.delete(questionComment);
 
-		return {
+		return right({
 			questionComment,
-		};
+		});
 	}
 }

@@ -1,14 +1,22 @@
+import { type Either, right } from '@/core/either';
 import type { QuestionCommentRepository } from '@/domain/forum/application/repositories/question-comment.repository';
 import type { QuestionComment } from '@/domain/forum/enterprise/entities/question-comment.entity';
 
-interface ListQuestionCommentsUseCaseInput {
+type ListQuestionCommentsUseCaseInput = {
 	questionId: string;
 	page: number;
-}
+};
 
-interface ListQuestionCommentsUseCaseOutput {
+type ListQuestionCommentsUseCaseOutputSuccess = {
 	questionComments: QuestionComment[];
-}
+};
+
+type ListQuestionCommentsUseCaseoutputError = null;
+
+type ListQuestionCommentsUseCaseOutput = Either<
+	ListQuestionCommentsUseCaseoutputError,
+	ListQuestionCommentsUseCaseOutputSuccess
+>;
 
 export class ListQuestionCommentsUseCase {
 	constructor(private questionCommentRepository: QuestionCommentRepository) {}
@@ -22,8 +30,8 @@ export class ListQuestionCommentsUseCase {
 				page,
 			});
 
-		return {
+		return right({
 			questionComments,
-		};
+		});
 	}
 }

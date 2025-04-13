@@ -1,17 +1,26 @@
+import { type Either, left, right } from '@/core/either';
 import type { QuestionRepository } from '@/domain/forum/application/repositories/question.repository';
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import type { Question } from '@/domain/forum/enterprise/entities/question.entity';
 
-interface EditQuestionUseCaseInput {
+type EditQuestionUseCaseInput = {
 	authorId: string;
 	questionId: string;
 	title: string;
 	content: string;
-}
+};
 
-interface EditQuestionUseCaseOutput {
+type EditQuestionUseCaseOutputSuccess = {
 	question: Question;
-}
+};
 
+type EditQuestionUseCaseoutputError = ResourceNotFoundError | NotAllowedError;
+
+type EditQuestionUseCaseOutput = Either<
+	EditQuestionUseCaseoutputError,
+	EditQuestionUseCaseOutputSuccess
+>;
 export class EditQuestionUseCase {
 	constructor(private questionRepository: QuestionRepository) {}
 
@@ -24,11 +33,11 @@ export class EditQuestionUseCase {
 		const question = await this.questionRepository.findById(questionId);
 
 		if (!question) {
-			throw new Error('Question not found');
+			return left(new ResourceNotFoundError());
 		}
 
 		if (question.authorId.toString() !== authorId) {
-			throw new Error('Unauthorized');
+			return left(new NotAllowedError());
 		}
 
 		question.title = title;
@@ -36,8 +45,8 @@ export class EditQuestionUseCase {
 
 		await this.questionRepository.save(question);
 
-		return {
+		return right({
 			question,
-		};
+		});
 	}
 }

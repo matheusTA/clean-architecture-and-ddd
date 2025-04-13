@@ -1,4 +1,6 @@
 import { ChooseQuestionBestAnswerUseCase } from '@/domain/forum/application/use-cases/choose-question-best-answer.use-case';
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeAnswer } from '@/test/factories/make-answer';
 import { makeQuestion } from '@/test/factories/make-question';
 import { InMemoryAnswerRepository } from '@/test/repositories/in-memory-answer-repository';
@@ -28,11 +30,12 @@ describe('choose question best answer use case', () => {
 		await questionRepository.create(question);
 		await answerRepository.create(answer);
 
-		await useCase.execute({
+		const result = await useCase.execute({
 			authorId: question.authorId.toString(),
 			answerId: answer.id.toString(),
 		});
 
+		expect(result.isRight()).toBeTruthy();
 		expect(questionRepository.questions[0].bestAnswerId).toEqual(answer.id);
 	});
 
@@ -40,24 +43,26 @@ describe('choose question best answer use case', () => {
 		const question = makeQuestion();
 		await questionRepository.create(question);
 
-		await expect(() =>
-			useCase.execute({
-				authorId: question.authorId.toString(),
-				answerId: 'non-existent-answer-id',
-			}),
-		).rejects.toThrow('Answer not found');
+		const result = await useCase.execute({
+			authorId: question.authorId.toString(),
+			answerId: 'non-existent-answer-id',
+		});
+
+		expect(result.isLeft()).toBeTruthy();
+		expect(result.value).toBeInstanceOf(ResourceNotFoundError);
 	});
 
 	it('should not be able to choose the best answer for a non-existent question', async () => {
 		const answer = makeAnswer();
 		await answerRepository.create(answer);
 
-		await expect(() =>
-			useCase.execute({
-				authorId: 'any-author-id',
-				answerId: answer.id.toString(),
-			}),
-		).rejects.toThrow('Question not found');
+		const result = await useCase.execute({
+			authorId: 'any-author-id',
+			answerId: answer.id.toString(),
+		});
+
+		expect(result.isLeft()).toBeTruthy();
+		expect(result.value).toBeInstanceOf(ResourceNotFoundError);
 	});
 
 	it('should not be able to choose the best answer if the user is not the question author', async () => {
@@ -69,11 +74,12 @@ describe('choose question best answer use case', () => {
 		await questionRepository.create(question);
 		await answerRepository.create(answer);
 
-		await expect(() =>
-			useCase.execute({
-				authorId: 'wrong-author-id',
-				answerId: answer.id.toString(),
-			}),
-		).rejects.toThrow('Unauthorized');
+		const result = await useCase.execute({
+			authorId: 'wrong-author-id',
+			answerId: answer.id.toString(),
+		});
+
+		expect(result.isLeft()).toBeTruthy();
+		expect(result.value).toBeInstanceOf(NotAllowedError);
 	});
 });

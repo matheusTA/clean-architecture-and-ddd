@@ -1,15 +1,27 @@
+import { type Either, left, right } from '@/core/either';
 import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
 import type { QuestionRepository } from '@/domain/forum/application/repositories/question.repository';
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import type { Question } from '@/domain/forum/enterprise/entities/question.entity';
 
-interface ChooseQuestionBestAnswerUseCaseInput {
+type ChooseQuestionBestAnswerUseCaseInput = {
 	authorId: string;
 	answerId: string;
-}
+};
 
-interface ChooseQuestionBestAnswerUseCaseOutput {
+type ChooseQuestionBestAnswerUseCaseOutputSuccess = {
 	question: Question;
-}
+};
+
+type ChooseQuestionBestAnswerUseCaseoutputError =
+	| ResourceNotFoundError
+	| NotAllowedError;
+
+type ChooseQuestionBestAnswerUseCaseOutput = Either<
+	ChooseQuestionBestAnswerUseCaseoutputError,
+	ChooseQuestionBestAnswerUseCaseOutputSuccess
+>;
 
 export class ChooseQuestionBestAnswerUseCase {
 	constructor(
@@ -24,7 +36,7 @@ export class ChooseQuestionBestAnswerUseCase {
 		const answer = await this.answerRepository.findById(answerId);
 
 		if (!answer) {
-			throw new Error('Answer not found');
+			return left(new ResourceNotFoundError());
 		}
 
 		const question = await this.questionRepository.findById(
@@ -32,19 +44,19 @@ export class ChooseQuestionBestAnswerUseCase {
 		);
 
 		if (!question) {
-			throw new Error('Question not found');
+			return left(new ResourceNotFoundError());
 		}
 
 		if (authorId !== question.authorId.toString()) {
-			throw new Error('Unauthorized');
+			return left(new NotAllowedError());
 		}
 
 		question.bestAnswerId = answer.id;
 
 		await this.questionRepository.save(question);
 
-		return {
+		return right({
 			question,
-		};
+		});
 	}
 }

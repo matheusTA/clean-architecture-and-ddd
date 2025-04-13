@@ -1,16 +1,25 @@
+import { type Either, left, right } from '@/core/either';
 import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import type { Answer } from '@/domain/forum/enterprise/entities/answer.entity';
 
-interface EditAnswerUseCaseInput {
+type EditAnswerUseCaseInput = {
 	authorId: string;
 	answerId: string;
 	content: string;
-}
+};
 
-interface EditAnswerUseCaseOutput {
+type EditAnswerUseCaseOutputSuccess = {
 	answer: Answer;
-}
+};
 
+type EditAnswerUseCaseoutputError = ResourceNotFoundError | NotAllowedError;
+
+type EditAnswerUseCaseOutput = Either<
+	EditAnswerUseCaseoutputError,
+	EditAnswerUseCaseOutputSuccess
+>;
 export class EditAnswerUseCase {
 	constructor(private answerRepository: AnswerRepository) {}
 
@@ -22,19 +31,19 @@ export class EditAnswerUseCase {
 		const answer = await this.answerRepository.findById(answerId);
 
 		if (!answer) {
-			throw new Error('Answer not found');
+			return left(new ResourceNotFoundError());
 		}
 
 		if (answer.authorId.toString() !== authorId) {
-			throw new Error('Unauthorized');
+			return left(new NotAllowedError());
 		}
 
 		answer.content = content;
 
 		await this.answerRepository.save(answer);
 
-		return {
+		return right({
 			answer,
-		};
+		});
 	}
 }
