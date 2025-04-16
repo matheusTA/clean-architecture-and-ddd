@@ -27,14 +27,14 @@ describe('edit question use case', () => {
 
 		await repository.create(createdQuestion);
 
-		const { isRight } = await useCase.execute({
+		const result = await useCase.execute({
 			authorId: createdQuestionAuthorId.toString(),
 			questionId: createdQuestionId.toString(),
 			title: 'new title',
 			content: 'new content',
 		});
 
-		expect(isRight()).toBe(true);
+		expect(result.isRight()).toBe(true);
 		expect(repository.questions[0]).toMatchObject({
 			title: 'new title',
 			content: 'new content',
@@ -42,15 +42,15 @@ describe('edit question use case', () => {
 	});
 
 	it('should throw an error if question is not found', async () => {
-		const { isLeft, value } = await useCase.execute({
+		const result = await useCase.execute({
 			authorId: 'author-id',
 			questionId: 'question-id',
 			title: 'title',
 			content: 'content',
 		});
 
-		expect(isLeft()).toBe(true);
-		expect(value).toBeInstanceOf(ResourceNotFoundError);
+		expect(result.isLeft()).toBe(true);
+		expect(result.value).toBeInstanceOf(ResourceNotFoundError);
 	});
 
 	it('should throw an error if author is not the same as the question author', async () => {
@@ -65,14 +65,14 @@ describe('edit question use case', () => {
 
 		await repository.create(createdQuestion);
 
-		const { isLeft, value } = await useCase.execute({
+		const result = await useCase.execute({
 			authorId: 'another-author-id',
 			questionId: createdQuestionId.toString(),
 			title: 'title',
 			content: 'content',
 		});
 
-		expect(isLeft()).toBe(true);
-		expect(value).toBeInstanceOf(NotAllowedError);
+		expect(result.isLeft()).toBe(true);
+		expect(result.value).toBeInstanceOf(NotAllowedError);
 	});
 });

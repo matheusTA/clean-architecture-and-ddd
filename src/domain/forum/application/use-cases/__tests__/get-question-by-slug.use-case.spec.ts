@@ -21,12 +21,12 @@ describe('get question by slug use case', () => {
 
 		await repository.create(createdQuestion);
 
-		const { value, isRight } = await useCase.execute({
+		const result = await useCase.execute({
 			slug: 'question-title',
 		});
 
-		expect(isRight()).toBe(true);
-		expect(value).toMatchObject({
+		expect(result.isRight()).toBe(true);
+		expect(result.value).toMatchObject({
 			question: expect.objectContaining({
 				title: createdQuestion.title,
 			}),
@@ -34,11 +34,11 @@ describe('get question by slug use case', () => {
 	});
 
 	it('should throw an error if question is not found', async () => {
-		const { isLeft, value } = await useCase.execute({
+		const result = await useCase.execute({
 			slug: 'question-title',
 		});
 
-		expect(isLeft()).toBe(true);
-		expect(value).toBeInstanceOf(ResourceNotFoundError);
+		expect(result.isLeft()).toBe(true);
+		expect(result.value).toBeInstanceOf(ResourceNotFoundError);
 	});
 });

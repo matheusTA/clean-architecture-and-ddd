@@ -12,20 +12,20 @@ describe('create question use case', () => {
 	});
 
 	it('should create a question', async () => {
-		const { value, isRight } = await useCase.execute({
+		const result = await useCase.execute({
 			authorId: 'author-id',
 			title: 'question title',
 			content: 'answer content',
 			attachmentsIds: ['attachment-id-1', 'attachment-id-2'],
 		});
 
-		expect(isRight()).toBe(true);
-		expect(value?.question.id).toBeTruthy();
-		expect(value?.question.attachments.length).toBe(2);
-		expect(value?.question.attachments[0].attachmentId.toString()).toBe(
+		expect(result.isRight()).toBe(true);
+		expect(result.value?.question.id).toBeTruthy();
+		expect(result.value?.question.attachments.length).toBe(2);
+		expect(result.value?.question.attachments[0].attachmentId.toString()).toBe(
 			'attachment-id-1',
 		);
-		expect(value?.question.attachments[1].attachmentId.toString()).toBe(
+		expect(result.value?.question.attachments[1].attachmentId.toString()).toBe(
 			'attachment-id-2',
 		);
 	});

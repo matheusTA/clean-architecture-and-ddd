@@ -27,23 +27,23 @@ describe('delete answer use case', () => {
 
 		await repository.create(createdAnswer);
 
-		const { isRight } = await useCase.execute({
+		const result = await useCase.execute({
 			authorId: createdAnswerAuthorId.toString(),
 			answerId: createdAnswerId.toString(),
 		});
 
-		expect(isRight()).toBe(true);
+		expect(result.isRight()).toBe(true);
 		expect(repository.answers).toHaveLength(0);
 	});
 
 	it('should throw an error if answer is not found', async () => {
-		const { isLeft, value } = await useCase.execute({
+		const result = await useCase.execute({
 			authorId: 'author-id',
 			answerId: 'answer-id',
 		});
 
-		expect(isLeft()).toBe(true);
-		expect(value).toBeInstanceOf(ResourceNotFoundError);
+		expect(result.isLeft()).toBe(true);
+		expect(result.value).toBeInstanceOf(ResourceNotFoundError);
 	});
 
 	it('should throw an error if author is not the same as the answer author', async () => {
@@ -58,12 +58,12 @@ describe('delete answer use case', () => {
 
 		await repository.create(createdAnswer);
 
-		const { isLeft, value } = await useCase.execute({
+		const result = await useCase.execute({
 			authorId: 'another-author-id',
 			answerId: createdAnswerId.toString(),
 		});
 
-		expect(isLeft()).toBe(true);
-		expect(value).toBeInstanceOf(NotAllowedError);
+		expect(result.isLeft()).toBe(true);
+		expect(result.value).toBeInstanceOf(NotAllowedError);
 	});
 });
