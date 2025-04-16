@@ -16,9 +16,17 @@ describe('create question use case', () => {
 			authorId: 'author-id',
 			title: 'question title',
 			content: 'answer content',
+			attachmentsIds: ['attachment-id-1', 'attachment-id-2'],
 		});
 
 		expect(isRight()).toBe(true);
 		expect(value?.question.id).toBeTruthy();
+		expect(value?.question.attachments.length).toBe(2);
+		expect(value?.question.attachments[0].attachmentId.toString()).toBe(
+			'attachment-id-1',
+		);
+		expect(value?.question.attachments[1].attachmentId.toString()).toBe(
+			'attachment-id-2',
+		);
 	});
 });
