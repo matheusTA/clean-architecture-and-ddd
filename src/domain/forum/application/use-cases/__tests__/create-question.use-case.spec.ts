@@ -1,3 +1,4 @@
+import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { CreateQuestionUseCase } from '@/domain/forum/application/use-cases/create-question.use-case';
 import { InMemoryQuestionRepository } from '@/test/repositories/in-memory-question-repository';
 import { expect } from 'vitest';
@@ -21,12 +22,14 @@ describe('create question use case', () => {
 
 		expect(result.isRight()).toBe(true);
 		expect(result.value?.question.id).toBeTruthy();
-		expect(result.value?.question.attachments.length).toBe(2);
-		expect(result.value?.question.attachments[0].attachmentId.toString()).toBe(
-			'attachment-id-1',
-		);
-		expect(result.value?.question.attachments[1].attachmentId.toString()).toBe(
-			'attachment-id-2',
-		);
+		expect(result.value?.question.attachments.currentItems.length).toBe(2);
+		expect(result.value?.question.attachments.currentItems).toEqual([
+			expect.objectContaining({
+				attachmentId: new UniqueEntityID('attachment-id-1'),
+			}),
+			expect.objectContaining({
+				attachmentId: new UniqueEntityID('attachment-id-2'),
+			}),
+		]);
 	});
 });

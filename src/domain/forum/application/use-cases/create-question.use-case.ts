@@ -1,6 +1,7 @@
 import { type Either, right } from '@/core/either';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { QuestionRepository } from '@/domain/forum/application/repositories/question.repository';
+import { QuestionAttachmentList } from '@/domain/forum/enterprise/entities/question-attachment-list.entity';
 import { QuestionAttachment } from '@/domain/forum/enterprise/entities/question-attachment.entity';
 import { Question } from '@/domain/forum/enterprise/entities/question.entity';
 
@@ -43,7 +44,7 @@ export class CreateQuestionUseCase {
 			}),
 		);
 
-		question.attachments = questionAttachments;
+		question.attachments = new QuestionAttachmentList(questionAttachments);
 
 		await this.questionRepository.create(question);
 
