@@ -3,16 +3,23 @@ import { DeleteAnswerUseCase } from '@/domain/forum/application/use-cases/delete
 import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
 import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeAnswer } from '@/test/factories/make-answer';
+import { makeAnswerAttachment } from '@/test/factories/make-answer-attachment';
+import { InMemoryAnswerAttachmentRepository } from '@/test/repositories/in-memory-answer-attachment-repository';
 import { InMemoryAnswerRepository } from '@/test/repositories/in-memory-answer-repository';
 import { expect } from 'vitest';
 
-let repository: InMemoryAnswerRepository;
+let answerRepository: InMemoryAnswerRepository;
+let answerAttachmentRepository: InMemoryAnswerAttachmentRepository;
 let useCase: DeleteAnswerUseCase;
 
 describe('delete answer use case', () => {
 	beforeEach(() => {
-		repository = new InMemoryAnswerRepository();
-		useCase = new DeleteAnswerUseCase(repository);
+		answerRepository = new InMemoryAnswerRepository();
+		answerAttachmentRepository = new InMemoryAnswerAttachmentRepository();
+		useCase = new DeleteAnswerUseCase(
+			answerRepository,
+			answerAttachmentRepository,
+		);
 	});
 
 	it('should be able to delete a answer by id', async () => {
@@ -25,7 +32,18 @@ describe('delete answer use case', () => {
 			createdAnswerId,
 		);
 
-		await repository.create(createdAnswer);
+		await answerRepository.create(createdAnswer);
+
+		answerAttachmentRepository.answerAttachments.push(
+			makeAnswerAttachment({
+				answerId: createdAnswerId,
+				attachmentId: new UniqueEntityID('1'),
+			}),
+			makeAnswerAttachment({
+				answerId: createdAnswerId,
+				attachmentId: new UniqueEntityID('2'),
+			}),
+		);
 
 		const result = await useCase.execute({
 			authorId: createdAnswerAuthorId.toString(),
@@ -33,7 +51,8 @@ describe('delete answer use case', () => {
 		});
 
 		expect(result.isRight()).toBe(true);
-		expect(repository.answers).toHaveLength(0);
+		expect(answerRepository.answers).toHaveLength(0);
+		expect(answerAttachmentRepository.answerAttachments).toHaveLength(0);
 	});
 
 	it('should throw an error if answer is not found', async () => {
@@ -56,7 +75,7 @@ describe('delete answer use case', () => {
 			createdAnswerId,
 		);
 
-		await repository.create(createdAnswer);
+		await answerRepository.create(createdAnswer);
 
 		const result = await useCase.execute({
 			authorId: 'another-author-id',

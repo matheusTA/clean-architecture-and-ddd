@@ -1,6 +1,7 @@
 import { Entity } from '@/core/entities/entity';
 import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
+import { AnswerAttachmentList } from '@/domain/forum/enterprise/entities/answer-attachment-list.entity';
 
 export interface AnswerProps {
 	createdAt: Date;
@@ -8,14 +9,19 @@ export interface AnswerProps {
 	content: string;
 	authorId: UniqueEntityID;
 	questionId: UniqueEntityID;
+	attachments: AnswerAttachmentList;
 }
 
 export class Answer extends Entity<AnswerProps> {
-	static build(props: Optional<AnswerProps, 'createdAt'>, id?: UniqueEntityID) {
+	static build(
+		props: Optional<AnswerProps, 'createdAt' | 'attachments'>,
+		id?: UniqueEntityID,
+	) {
 		const answer = new Answer(
 			{
 				...props,
 				createdAt: props.createdAt ?? new Date(),
+				attachments: props.attachments ?? new AnswerAttachmentList(),
 			},
 			id,
 		);
@@ -51,8 +57,17 @@ export class Answer extends Entity<AnswerProps> {
 		return this.props.content.substring(0, 120).trimEnd().concat('...');
 	}
 
+	get attachments() {
+		return this.props.attachments;
+	}
+
 	set content(value: string) {
 		this.props.content = value;
+		this.touch();
+	}
+
+	set attachments(value: AnswerAttachmentList) {
+		this.props.attachments = value;
 		this.touch();
 	}
 }

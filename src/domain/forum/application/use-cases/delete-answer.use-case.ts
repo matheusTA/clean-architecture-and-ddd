@@ -1,4 +1,5 @@
 import { type Either, left, right } from '@/core/either';
+import type { AnswerAttachmentRepository } from '@/domain/forum/application/repositories/answer-attachment.repository';
 import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
 import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
 import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
@@ -20,7 +21,10 @@ type DeleteAnswerUseCaseOutput = Either<
 >;
 
 export class DeleteAnswerUseCase {
-	constructor(private answerRepository: AnswerRepository) {}
+	constructor(
+		private answerRepository: AnswerRepository,
+		private answerAttachmentRepository: AnswerAttachmentRepository,
+	) {}
 
 	async execute({
 		authorId,
@@ -37,6 +41,9 @@ export class DeleteAnswerUseCase {
 		}
 
 		await this.answerRepository.delete(answer);
+		await this.answerAttachmentRepository.deleteManyByAnswerId(
+			answer.id.toString(),
+		);
 
 		return right({
 			answer,
