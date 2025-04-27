@@ -3,16 +3,23 @@ import { DeleteQuestionUseCase } from '@/domain/forum/application/use-cases/dele
 import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
 import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeQuestion } from '@/test/factories/make-question';
+import { makeQuestionAttachment } from '@/test/factories/make-question-attachment';
+import { InMemoryQuestionAttachmentRepository } from '@/test/repositories/in-memory-question-attachment-repository';
 import { InMemoryQuestionRepository } from '@/test/repositories/in-memory-question-repository';
 import { expect } from 'vitest';
 
-let repository: InMemoryQuestionRepository;
+let questionRepository: InMemoryQuestionRepository;
+let questionAttachmentRepository: InMemoryQuestionAttachmentRepository;
 let useCase: DeleteQuestionUseCase;
 
 describe('delete question use case', () => {
 	beforeEach(() => {
-		repository = new InMemoryQuestionRepository();
-		useCase = new DeleteQuestionUseCase(repository);
+		questionRepository = new InMemoryQuestionRepository();
+		questionAttachmentRepository = new InMemoryQuestionAttachmentRepository();
+		useCase = new DeleteQuestionUseCase(
+			questionRepository,
+			questionAttachmentRepository,
+		);
 	});
 
 	it('should be able to delete a question by id', async () => {
@@ -25,7 +32,18 @@ describe('delete question use case', () => {
 			createdQuestionId,
 		);
 
-		await repository.create(createdQuestion);
+		await questionRepository.create(createdQuestion);
+
+		questionAttachmentRepository.questionAttachments.push(
+			makeQuestionAttachment({
+				questionId: createdQuestionId,
+				attachmentId: new UniqueEntityID('1'),
+			}),
+			makeQuestionAttachment({
+				questionId: createdQuestionId,
+				attachmentId: new UniqueEntityID('2'),
+			}),
+		);
 
 		const result = await useCase.execute({
 			authorId: createdQuestionAuthorId.toString(),
@@ -33,7 +51,8 @@ describe('delete question use case', () => {
 		});
 
 		expect(result.isRight()).toBe(true);
-		expect(repository.questions).toHaveLength(0);
+		expect(questionRepository.questions).toHaveLength(0);
+		expect(questionAttachmentRepository.questionAttachments).toHaveLength(0);
 	});
 
 	it('should throw an error if question is not found', async () => {
@@ -56,7 +75,7 @@ describe('delete question use case', () => {
 			createdQuestionId,
 		);
 
-		await repository.create(createdQuestion);
+		await questionRepository.create(createdQuestion);
 
 		const result = await useCase.execute({
 			authorId: 'another-author-id',
