@@ -1,6 +1,6 @@
+import { NotAllowedError } from '@/core/errors/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found.error';
 import { DeleteAnswerCommentUseCase } from '@/domain/forum/application/use-cases/delete-answer-comment.use-case';
-import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeAnswerComment } from '@/test/factories/make-answer-comment';
 import { InMemoryAnswerCommentRepository } from '@/test/repositories/in-memory-answer-comment-repository';
 import { expect } from 'vitest';

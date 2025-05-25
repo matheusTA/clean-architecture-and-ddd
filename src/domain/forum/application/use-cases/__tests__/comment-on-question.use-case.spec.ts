@@ -1,5 +1,5 @@
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found.error';
 import { CommentOnQuestionUseCase } from '@/domain/forum/application/use-cases/comment-on-question.use-case';
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeQuestion } from '@/test/factories/make-question';
 import { InMemoryQuestionCommentRepository } from '@/test/repositories/in-memory-question-comment-repository';
 import { InMemoryQuestionRepository } from '@/test/repositories/in-memory-question-repository';

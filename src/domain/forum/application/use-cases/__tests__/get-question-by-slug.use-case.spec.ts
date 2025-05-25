@@ -1,4 +1,4 @@
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found.error';
 import { GetQuestionBySlugUseCase } from '@/domain/forum/application/use-cases/get-question-by-slug';
 import { Slug } from '@/domain/forum/enterprise/entities/value-objects/slug.value-object';
 import { makeQuestion } from '@/test/factories/make-question';

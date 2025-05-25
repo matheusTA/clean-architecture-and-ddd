@@ -1,8 +1,8 @@
 import { type Either, left, right } from '@/core/either';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found.error';
 import type { AnswerCommentRepository } from '@/domain/forum/application/repositories/answer-comment.repository';
 import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { AnswerComment } from '@/domain/forum/enterprise/entities/answer-comment.entity';
 
 type CommentOnAnswerUseCaseInput = {

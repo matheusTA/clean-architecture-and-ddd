@@ -1,8 +1,8 @@
 import { type Either, left, right } from '@/core/either';
+import { NotAllowedError } from '@/core/errors/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found.error';
 import type { QuestionAttachmentRepository } from '@/domain/forum/application/repositories/question-attachment.repository';
 import type { QuestionRepository } from '@/domain/forum/application/repositories/question.repository';
-import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import type { Question } from '@/domain/forum/enterprise/entities/question.entity';
 
 type DeleteQuestionUseCaseInput = {

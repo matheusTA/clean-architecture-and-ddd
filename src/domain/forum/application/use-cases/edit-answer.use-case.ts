@@ -1,9 +1,9 @@
 import { type Either, left, right } from '@/core/either';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import { NotAllowedError } from '@/core/errors/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found.error';
 import type { AnswerAttachmentRepository } from '@/domain/forum/application/repositories/answer-attachment.repository';
 import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
-import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { AnswerAttachmentList } from '@/domain/forum/enterprise/entities/answer-attachment-list.entity';
 import { AnswerAttachment } from '@/domain/forum/enterprise/entities/answer-attachment.entity';
 import type { Answer } from '@/domain/forum/enterprise/entities/answer.entity';

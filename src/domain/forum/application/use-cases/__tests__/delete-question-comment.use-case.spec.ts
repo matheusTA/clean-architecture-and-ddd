@@ -1,6 +1,6 @@
+import { NotAllowedError } from '@/core/errors/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found.error';
 import { DeleteQuestionCommentUseCase } from '@/domain/forum/application/use-cases/delete-question-comment.use-case';
-import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeQuestionComment } from '@/test/factories/make-question-comment';
 import { InMemoryQuestionCommentRepository } from '@/test/repositories/in-memory-question-comment-repository';
 import { expect } from 'vitest';

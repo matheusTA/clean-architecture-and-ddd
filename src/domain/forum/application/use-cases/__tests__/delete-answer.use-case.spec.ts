@@ -1,7 +1,7 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import { NotAllowedError } from '@/core/errors/errors/not-allowed.error';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found.error';
 import { DeleteAnswerUseCase } from '@/domain/forum/application/use-cases/delete-answer.use-case';
-import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed.error';
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found.error';
 import { makeAnswer } from '@/test/factories/make-answer';
 import { makeAnswerAttachment } from '@/test/factories/make-answer-attachment';
 import { InMemoryAnswerAttachmentRepository } from '@/test/repositories/in-memory-answer-attachment-repository';
