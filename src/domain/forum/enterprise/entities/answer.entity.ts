@@ -1,7 +1,8 @@
-import { Entity } from '@/core/entities/entity';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
 import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 import { AnswerAttachmentList } from '@/domain/forum/enterprise/entities/answer-attachment-list.entity';
+import { AnswerCreatedEvent } from '@/domain/forum/enterprise/events/answer-created.event';
 
 export interface AnswerProps {
 	createdAt: Date;
@@ -12,7 +13,7 @@ export interface AnswerProps {
 	attachments: AnswerAttachmentList;
 }
 
-export class Answer extends Entity<AnswerProps> {
+export class Answer extends AggregateRoot<AnswerProps> {
 	static build(
 		props: Optional<AnswerProps, 'createdAt' | 'attachments'>,
 		id?: UniqueEntityID,
@@ -25,6 +26,10 @@ export class Answer extends Entity<AnswerProps> {
 			},
 			id,
 		);
+
+		if (!id) {
+			answer.addDomainEvent(new AnswerCreatedEvent(answer));
+		}
 
 		return answer;
 	}
