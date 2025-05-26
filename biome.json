@@ -46,6 +46,10 @@
       },
       "suspicious": {
         "noConsoleLog": "error"
+      },
+      "complexity": {
+        "noStaticOnlyClass": "off",
+        "noThisInStatic": "off"
       }
     },
     "ignore": [
