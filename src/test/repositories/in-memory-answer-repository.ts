@@ -1,3 +1,4 @@
+import { DomainEvents } from '@/core/events/domain-events';
 import type { PaginationParams } from '@/core/types/pagination-params';
 import type { AnswerRepository } from '@/domain/forum/application/repositories/answer.repository';
 import type { Answer } from '@/domain/forum/enterprise/entities/answer.entity';
@@ -30,10 +31,14 @@ export class InMemoryAnswerRepository implements AnswerRepository {
 		const answerIndex = this.answers.findIndex((item) => item.id === answer.id);
 
 		this.answers[answerIndex] = answer;
+
+		DomainEvents.dispatchEventsForAggregate(answer.id);
 	}
 
 	async create(answer: Answer): Promise<void> {
 		this.answers.push(answer);
+
+		DomainEvents.dispatchEventsForAggregate(answer.id);
 	}
 
 	async delete(answer: Answer): Promise<void> {

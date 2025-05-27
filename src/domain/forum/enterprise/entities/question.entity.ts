@@ -2,6 +2,7 @@ import { AggregateRoot } from '@/core/entities/aggregate-root';
 import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 import { QuestionAttachmentList } from '@/domain/forum/enterprise/entities/question-attachment-list.entity';
+import { QuestionBestAnswerChosenEvent } from '@/domain/forum/enterprise/events/question-best-answer-chosen.event';
 import dayjs from 'dayjs';
 import { Slug } from './value-objects/slug.value-object';
 
@@ -90,6 +91,10 @@ export class Question extends AggregateRoot<QuestionProps> {
 	}
 
 	set bestAnswerId(value: UniqueEntityID | undefined) {
+		if (value && value !== this.props.bestAnswerId) {
+			this.addDomainEvent(new QuestionBestAnswerChosenEvent(this, value));
+		}
+
 		this.props.bestAnswerId = value;
 		this.touch();
 	}

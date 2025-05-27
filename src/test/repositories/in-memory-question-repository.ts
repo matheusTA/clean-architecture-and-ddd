@@ -1,3 +1,4 @@
+import { DomainEvents } from '@/core/events/domain-events';
 import type { PaginationParams } from '@/core/types/pagination-params';
 import type { QuestionRepository } from '@/domain/forum/application/repositories/question.repository';
 import type { Question } from '@/domain/forum/enterprise/entities/question.entity';
@@ -42,10 +43,14 @@ export class InMemoryQuestionRepository implements QuestionRepository {
 		);
 
 		this.questions[questionDeletedIndex] = question;
+
+		DomainEvents.dispatchEventsForAggregate(question.id);
 	}
 
 	async create(question: Question): Promise<void> {
 		this.questions.push(question);
+
+		DomainEvents.dispatchEventsForAggregate(question.id);
 	}
 
 	async delete(question: Question): Promise<void> {

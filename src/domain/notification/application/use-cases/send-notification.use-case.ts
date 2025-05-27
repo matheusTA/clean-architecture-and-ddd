@@ -3,7 +3,7 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { NotificationRepository } from '@/domain/notification/application/repositories/notification.repository';
 import { Notification } from '@/domain/notification/enterprise/entities/notification.entity';
 
-type SendNotificationUseCaseInput = {
+export type SendNotificationUseCaseInput = {
 	recipientId: string;
 	title: string;
 	content: string;
@@ -15,7 +15,7 @@ type SendNotificationUseCaseOutputSuccess = {
 
 type SendNotificationUseCaseoutputError = null;
 
-type SendNotificationUseCaseOutput = Either<
+export type SendNotificationUseCaseOutput = Either<
 	SendNotificationUseCaseoutputError,
 	SendNotificationUseCaseOutputSuccess
 >;
